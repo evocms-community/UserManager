@@ -405,7 +405,7 @@ class UserLogin implements UserServiceInterface
                 'username' => $this->user->username,
                 'userpassword' => $this->userData['password'],
                 'savedpassword' => $this->user->password,
-                'rememberme' => $this->userData['rememberme']
+                'rememberme' => $this->userData['rememberme'] ?? false
             ));
         }
 
