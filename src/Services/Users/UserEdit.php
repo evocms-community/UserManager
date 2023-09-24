@@ -100,7 +100,10 @@ class UserEdit implements UserServiceInterface
         if (!$this->checkRules()) {
             throw new ServiceActionException(\Lang::get('global.error_no_privileges'));
         }
-
+        
+        $user = User::find($this->userData['id']);
+        $this->userData = array_merge($user->toArray() + $user->attributes->toArray(), $this->userData);
+        
         // invoke OnBeforeUserFormSave event
         if ($this->events) {
             EvolutionCMS()->invokeEvent("OnBeforeUserSave", [
@@ -116,7 +119,7 @@ class UserEdit implements UserServiceInterface
             $exception->setValidationErrors($this->validateErrors);
             throw $exception;
         }
-        $user = User::find($this->userData['id']);
+        
         if (isset($this->userData['username']) && $this->userData['username'] != '') {
             $user->username = $this->userData['username'];
             $user->save();
