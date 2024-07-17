@@ -124,12 +124,12 @@ class UserSaveValues implements UserServiceInterface
         }
 
         foreach ($tvs['save'] as $value) {
-            \EvolutionCMS\Models\UserValue::updateOrCreate([
+            UserValue::updateOrCreate([
                 'userid' => $id, 'tmplvarid' => $value['id']
             ], ['value' => $value['value']]);
         }
         if($tvs['delete']) {
-            \EvolutionCMS\Models\UserValue::query()
+            UserValue::query()
                 ->whereIn('tmplvarid', $tvs['delete'])
                 ->where('userid', $id)
                 ->delete();
