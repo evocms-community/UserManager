@@ -110,10 +110,7 @@ class UserSaveValues implements UserServiceInterface
                         ->join('site_tmplvars', 'site_tmplvars.id', '=', 'user_role_vars.tmplvarid')->get();
                 });
             });
-        $tvs = [
-            'save' => [],
-            'delete' => []
-        ];
+        $tvs = [];
 
         foreach ($tmplvars as $tmplvar) {
             if (isset($this->userData[$tmplvar->name]) && !is_null($this->userData[$tmplvar->name]) && $this->userData[$tmplvar->name] != $tmplvar->default_text) {
@@ -128,7 +125,7 @@ class UserSaveValues implements UserServiceInterface
                 'userid' => $id, 'tmplvarid' => $value['id']
             ], ['value' => $value['value']]);
         }
-        if($tvs['delete']) {
+        if(isset($tvs['delete'])) {
             UserValue::query()
                 ->whereIn('tmplvarid', $tvs['delete'])
                 ->where('userid', $id)
