@@ -98,13 +98,13 @@ class UserSaveValues implements UserServiceInterface
 
         $id = $this->userData['id'];
         unset($this->userData['id']);
-        $role = UserAttribute::select('role')->where('internalKey', $id)->get();
+        $role = UserAttribute::select('role')->where('internalKey', $id)->value('role');
 
         $values = $this->excludeStandardFields($this->userData);
 
         $tmplvars = Cache::store('array')->rememberForever('roletmplvars' . $role,
-            function () {
-                return Cache::rememberForever('roletmplvars' . $role, function () {
+            function () use ($role) {
+                return Cache::rememberForever('roletmplvars' . $role, function () use ($role) {
                     return UserRoleVar::query()->select('site_tmplvars.*')
                         ->where('roleid', $role)
                         ->join('site_tmplvars', 'site_tmplvars.id', '=', 'user_role_vars.tmplvarid')->get();
@@ -130,7 +130,7 @@ class UserSaveValues implements UserServiceInterface
         }
         if($tvs['delete']) {
             \EvolutionCMS\Models\UserValue::query()
-                ->whereIn('tmplvarid', $this->tvs['delete'])
+                ->whereIn('tmplvarid', $tvs['delete'])
                 ->where('userid', $id)
                 ->delete();
         }
