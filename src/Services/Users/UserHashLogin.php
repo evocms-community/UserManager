@@ -48,6 +48,20 @@ class UserHashLogin extends UserLogin
      */
     protected $userSettings;
 
+    public function getValidationRules(): array
+    {
+        return [
+            'hash' => ['required', 'string'],
+        ];
+    }
+
+    public function getValidationMessages(): array
+    {
+        return [
+            'hash.required' => Lang::get("global.required_field", ['field' => 'hash']),
+            'hash.string' => Lang::get("global.required_field", ['field' => 'hash']),
+        ];
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Model
@@ -60,6 +74,11 @@ class UserHashLogin extends UserLogin
             throw new ServiceActionException(\Lang::get('global.error_no_privileges'));
         }
 
+        if (!$this->validate()) {
+            $exception = new ServiceValidationException();
+            $exception->setValidationErrors($this->validateErrors);
+            throw $exception;
+        }
 
         $this->user = \EvolutionCMS\Models\User::query()
             ->where('cachepwd', $this->userData['hash'])->first();
